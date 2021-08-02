@@ -1,7 +1,7 @@
 # Личный проект «Типотека» [![Build status][travis-image]][travis-url]
 
-* Студент: [Sasha](https://up.htmlacademy.ru/nodejs/3/user/654801).
-* Наставник: `Неизвестно`.
+- Студент: [Sasha](https://up.htmlacademy.ru/nodejs/3/user/654801).
+- Наставник: [Дмитрий Мирошниченко](https://htmlacademy.ru/profile/id591417).
 
 ---
 
