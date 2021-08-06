@@ -7,5 +7,5 @@ module.exports = {
   run() {
     const version = packageJsonFile.version;
     console.info(version);
-  }
+  },
 };
