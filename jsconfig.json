@@ -1,7 +1,14 @@
 {
   "compilerOptions": {
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
     "target": "es2018",
     "module": "es6",
-    "checkJs": true
+    "checkJs": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"],
+      "service/*": ["./src/service/*"]
+    }
   }
 }
