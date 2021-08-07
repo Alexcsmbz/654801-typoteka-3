@@ -5,4 +5,10 @@ env:
   es6: true
   node: true
 
+rules:
+  max-len: ["warn", { "code": 120 }]
+  comma-dangle: ["error", "always-multiline"]
+  # object-curly-newline: ["error", "always"]
+  # object-property-newline: ["error", { "allowAllPropertiesOnSameLine": true }]
+
 extends: 'htmlacademy/node'
