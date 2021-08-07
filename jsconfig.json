@@ -7,7 +7,7 @@
     "checkJs": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"],
+      "src": ["./*"],
       "service/*": ["./src/service/*"]
     }
   }
