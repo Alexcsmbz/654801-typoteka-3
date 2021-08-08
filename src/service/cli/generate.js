@@ -1,10 +1,11 @@
 'use strict';
 
-const fs = require(`fs`);
+const fs = require(`fs`).promises;
 const {MAX_ANNOUNCE_SENTENCES_AMOUNT, TITLES, SENTENCES, CATEGORIES, MAX_MONTHS_PERIOD} = require(`./constants`);
 const {DEFAULT_AMOUNT, FILE_NAME, MAX_ADS_AMOUNT} = require(`./constants`);
 const {getRandomDate, getRandomInt, shuffle} = require(`./utils`);
 const {ExitCode} = require(`src/constants`);
+const chalk = require(`chalk`);
 
 const generateAds = (/** @type {number} */ count) => Array(count).fill({}).map(() => ({
   title: TITLES[getRandomInt(0, TITLES.length - 1)],
@@ -21,21 +22,19 @@ module.exports = {
   /**
    * @param {string[] | [any]} [args]
    */
-  run(args) {
+  async run(args) {
     const [amount] = args;
     const amountAd = Number.parseInt(amount, 10) || DEFAULT_AMOUNT;
     const content = JSON.stringify(generateAds(amountAd));
 
     if (amount < MAX_ADS_AMOUNT) {
-      fs.writeFile(FILE_NAME, content, (err) => {
-        if (err) {
-          console.error(`Can't write data to file...`);
-          process.exit(ExitCode.ERROR);
-        }
-      });
-    } else {
-      console.error(`Amount should be less ${MAX_ADS_AMOUNT}. Try again`);
-      process.exit(ExitCode.ERROR);
+      try {
+        await fs.writeFile(FILE_NAME, content);
+        console.log(chalk.green(`Operation success. File created.`));
+      } catch (e) {
+        console.error(chalk.red(`Can't write data to file...`));
+        process.exit(ExitCode.ERROR);
+      }
     }
   },
 };
