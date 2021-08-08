@@ -27,5 +27,8 @@
     "eslint": "7.32.0",
     "eslint-config-htmlacademy": "0.6.0",
     "module-alias": "2.2.2"
+  },
+  "dependencies": {
+    "chalk": "4.1.2"
   }
 }
