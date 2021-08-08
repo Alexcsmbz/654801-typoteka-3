@@ -4,10 +4,11 @@ const dayjs = require(`dayjs`);
 
 const getRandomInt = (/** @type {number} */ min, /** @type {number} */ max) =>
   Math.floor(Math.random() * (max - min + 1) + min);
+
 const getRandomDate = (
     /** @type {{ getTime: () => number; }} */ start,
     /** @type {{ getTime: () => number; }} */ end,
-) => dayjs(new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()))).format(`YYYY-MM-DD HH:mm:ss`);
+) => dayjs(new Date(getRandomInt(start.getTime(), end.getTime()))).format(`YYYY-MM-DD HH:mm:ss`);
 
 
 const shuffle = (/** @type {any[]} */ array) => {
