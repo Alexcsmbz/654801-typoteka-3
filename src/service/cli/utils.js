@@ -1,6 +1,8 @@
 'use strict';
 
+const fs = require(`fs`).promises;
 const dayjs = require(`dayjs`);
+const chalk = require(`chalk`);
 
 const getRandomInt = (/** @type {number} */ min, /** @type {number} */ max) =>
   Math.floor(Math.random() * (max - min + 1) + min);
@@ -20,8 +22,19 @@ const shuffle = (/** @type {any[]} */ array) => {
   return array;
 };
 
+const readContent = async (/** @type {string} */ filePath) => {
+  try {
+    const content = await fs.readFile(filePath, `utf8`);
+    return content.trim().split(`\n`);
+  } catch (e) {
+    console.error(chalk.red(e));
+    return [];
+  }
+};
+
 module.exports = {
   getRandomInt,
   shuffle,
   getRandomDate,
+  readContent,
 };
