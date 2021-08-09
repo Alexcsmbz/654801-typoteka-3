@@ -6,7 +6,7 @@ const {
   MAX_MONTHS_PERIOD,
   mockFilePaths,
 } = require(`./constants`);
-const {DEFAULT_AMOUNT, FILE_NAME, MAX_ADS_AMOUNT} = require(`./constants`);
+const {DEFAULT_AMOUNT, MOCK_FILENAME, MAX_ADS_AMOUNT} = require(`./constants`);
 const {getRandomDate, getRandomInt, shuffle, readContent} = require(`./utils`);
 const {ExitCode} = require(`src/constants`);
 const chalk = require(`chalk`);
@@ -26,7 +26,7 @@ const generateAds = (
   сategory: shuffle(categories).slice(0, getRandomInt(1, categories.length - 1)),
 }));
 
-const doParallelFlow = async (
+const doInParallelFlow = async (
     /** @type  {any[]} */ items,
     /** @type {(item: any) => Promise<any>} */ getItem,
 ) => await Promise.all(items.map(async (item) => await getItem(item)));
@@ -39,13 +39,13 @@ module.exports = {
   async run(args) {
     const [amount] = args;
     const amountAd = Number.parseInt(amount, 10) || DEFAULT_AMOUNT;
-    const [sentences, titles, categories] = await doParallelFlow(mockFilePaths, readContent);
+    const [sentences, titles, categories] = await doInParallelFlow(mockFilePaths, readContent);
 
     const content = JSON.stringify(generateAds(amountAd, titles, categories, sentences));
 
     if (amount < MAX_ADS_AMOUNT) {
       try {
-        await fs.writeFile(FILE_NAME, content);
+        await fs.writeFile(MOCK_FILENAME, content);
         console.log(chalk.green(`Operation success. File created.`));
       } catch (e) {
         console.error(chalk.red(`Can't write data to file...`));
