@@ -1,11 +1,7 @@
 'use strict';
 
 const fs = require(`fs`).promises;
-const {
-  MAX_ANNOUNCE_SENTENCES_AMOUNT,
-  MAX_MONTHS_PERIOD,
-  mockFilePaths,
-} = require(`./constants`);
+const {MAX_ANNOUNCE_SENTENCES_AMOUNT, MAX_MONTHS_PERIOD, mockFilePaths} = require(`./constants`);
 const {DEFAULT_AMOUNT, MOCK_FILENAME, MAX_ADS_AMOUNT} = require(`./constants`);
 const {getRandomDate, getRandomInt, shuffle, readContent} = require(`./utils`);
 const {ExitCode} = require(`src/constants`);
