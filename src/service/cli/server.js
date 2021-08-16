@@ -8,8 +8,14 @@ const {sendResponse} = require(`./utils`);
 const {MOCK_FILENAME} = require(`./constants`);
 const fs = require(`fs`).promises;
 
+const getDataFromCache = async (
+    /** @type {any} */ cahce,
+    /** @type {string} */ path,
+) => cahce ? cahce : await fs.readFile(path);
+
 const onClientConnect = async (/** @type {{ url: string; }} */ req, /** @type {any} */ res) => {
-  const content = await fs.readFile(MOCK_FILENAME);
+  let cache = null;
+  const content = await getDataFromCache(cache, MOCK_FILENAME);
 
   switch (req.url) {
     case `/`:
