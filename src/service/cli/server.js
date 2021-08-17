@@ -15,7 +15,7 @@ const getDataFromCache = async (
 
 const onClientConnect = async (/** @type {{ url: string; }} */ req, /** @type {any} */ res) => {
   let cache = null;
-  const content = await getDataFromCache(cache, MOCK_FILENAME);
+  const content = cache = await getDataFromCache(cache, MOCK_FILENAME);
 
   switch (req.url) {
     case `/`:
