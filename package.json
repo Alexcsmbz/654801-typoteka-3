@@ -7,7 +7,8 @@
     "test": "npm run eslint",
     "start": "node ./src/service/service.js",
     "server": "nodemon ./src/service/service.js --server",
-    "eslint": "eslint --ext .js src/"
+    "eslint": "eslint --ext .js src/",
+    "start-front-server": "nodemon ./src/express/express.js"
   },
   "_moduleAliases": {
     "service": "src/service",
@@ -31,6 +32,7 @@
     "nodemon": "2.0.12"
   },
   "dependencies": {
-    "chalk": "4.1.2"
+    "chalk": "4.1.2",
+    "express": "4.17.1"
   }
 }
