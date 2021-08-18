@@ -8,14 +8,24 @@ const {sendResponse} = require(`./utils`);
 const {MOCK_FILENAME} = require(`./constants`);
 const fs = require(`fs`).promises;
 
-const getDataFromCache = async (
-    /** @type {any} */ cahce,
-    /** @type {string} */ path,
-) => cahce ? cahce : await fs.readFile(path);
+const getDataFromCache = () => {
+  let cache = null;
+
+  return async (path) => {
+    if (cache) {
+      return cache;
+    }
+
+    cache = await fs.readFile(path);
+
+    return cache;
+  };
+};
+
+const getAds = getDataFromCache();
 
 const onClientConnect = async (/** @type {{ url: string; }} */ req, /** @type {any} */ res) => {
-  let cache = null;
-  const content = cache = await getDataFromCache(cache, MOCK_FILENAME);
+  const content = await getAds(MOCK_FILENAME);
 
   switch (req.url) {
     case `/`:
