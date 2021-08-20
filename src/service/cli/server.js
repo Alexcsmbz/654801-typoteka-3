@@ -1,12 +1,10 @@
 'use strict';
 
-const chalk = require(`chalk`);
-const http = require(`http`);
 const {DEFAULT_PORT} = require(`./constants`);
-const {HttpCode} = require(`src/constants`);
-const {sendResponse} = require(`./utils`);
 const {MOCK_FILENAME} = require(`./constants`);
 const fs = require(`fs`).promises;
+const express = require(`express`);
+const {Router} = require(`express`);
 
 const getDataFromCache = () => {
   let cache = null;
@@ -21,29 +19,18 @@ const getDataFromCache = () => {
     return cache;
   };
 };
-
 const getAds = getDataFromCache();
 
-const onClientConnect = async (/** @type {{ url: string; }} */ req, /** @type {any} */ res) => {
-  const content = await getAds(MOCK_FILENAME);
+const app = express();
 
-  switch (req.url) {
-    case `/`:
-      try {
-        const mocks = JSON.parse(content.toString());
-        const message = mocks.map((/** @type {{ title: string; }} */ post) => `<li>${post.title}</li>`).join(``);
-        sendResponse(res, HttpCode.OK, `<ul>${message}</ul>`);
-      } catch (err) {
-        sendResponse(res, HttpCode.NOT_FOUND, `Not found`);
-      }
+// @ts-ignore
+const router = new Router();
 
-      break;
-    default:
-      sendResponse(res, HttpCode.NOT_FOUND, `Not found`);
-      break;
-  }
-  return;
-};
+router.get(`/posts`, async (_, res) => res.json(JSON.parse(await getAds(MOCK_FILENAME))));
+
+
+app.use(express.json());
+app.use(router);
 
 module.exports = {
   name: `--server`,
@@ -54,14 +41,6 @@ module.exports = {
     const [portFromArgs] = args;
     const port = Number.parseInt(portFromArgs, 10) || DEFAULT_PORT;
 
-    // @ts-ignore
-    http.createServer(onClientConnect)
-    .listen(port)
-    .on(`listening`, () => {
-      console.info(chalk.green(`Ожидаю соединений на ${port}`));
-    })
-    .on(`error`, ({message}) => {
-      console.error(chalk.red(`Ошибка при создании сервера: ${message}`));
-    });
+    app.listen(port, () => console.log(`Сервер запущен на порту: ${port}`));
   },
 };

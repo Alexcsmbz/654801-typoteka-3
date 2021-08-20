@@ -32,32 +32,9 @@ const readContent = async (/** @type {string} */ filePath) => {
   }
 };
 
-const getHtmlDocumentTemplate = (/** @type {string} */ body) => `
-    <!Doctype html>
-      <html lang="ru">
-      <head>
-        <title>App</title>
-      </head>
-      <body>${body}</body>
-    </html>`;
-
-const sendResponse = (
-    /** @type {any} */ res,
-    /** @type {number} */ statusCode,
-    /** @type {string} */ htmlDocumentBody,
-) => {
-  res.writeHead(statusCode, {
-    'Content-Type': `text/html; charset=UTF-8`,
-  });
-
-  res.end(getHtmlDocumentTemplate(htmlDocumentBody).trim());
-};
-
-
 module.exports = {
   getRandomInt,
   shuffle,
   getRandomDate,
   readContent,
-  sendResponse,
 };
