@@ -38,8 +38,7 @@ module.exports = {
     const [sentences, titles, categories] = await doInParallelFlow(mockFilePaths, readContent);
 
     const content = JSON.stringify(generateAds(amountAd, titles, categories, sentences));
-
-    if (amount < MAX_ADS_AMOUNT) {
+    if (amountAd < MAX_ADS_AMOUNT) {
       try {
         await fs.writeFile(MOCK_FILENAME, content);
         console.log(chalk.green(`Operation success. File created.`));
