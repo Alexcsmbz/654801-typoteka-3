@@ -3,7 +3,7 @@
 const express = require(`express`);
 const path = require(`path`);
 const {DEFAULT_PORT, PUBLIC_DIR} = require(`./constants`);
-const {router} = require(`../router`);
+const {router} = require(`./router`);
 
 const app = express();
 

@@ -1,17 +1,22 @@
 'use strict';
 
 const fs = require(`fs`).promises;
-const {MAX_ANNOUNCE_SENTENCES_AMOUNT, MAX_MONTHS_PERIOD, mockFilePaths} = require(`./constants`);
+const {MAX_ANNOUNCE_SENTENCES_AMOUNT, MAX_MONTHS_PERIOD, mockFilePaths, ID_LENGTH} = require(`./constants`);
 const {DEFAULT_AMOUNT, MOCK_FILENAME, MAX_ADS_AMOUNT} = require(`./constants`);
 const {getRandomDate, getRandomInt, shuffle, readContent} = require(`./utils`);
 const {ExitCode} = require(`src/constants`);
 const chalk = require(`chalk`);
+const {nanoid} = require(`nanoid`);
+
+const generateComments = (/** @type {string[]} */ comments) =>
+  comments.slice(0, getRandomInt(1, comments.length - 1)).map((c) => ({text: c, id: nanoid(ID_LENGTH)}));
 
 const generateAds = (
     /** @type {number} */ count,
     /** @type {string[]} */ titles,
     /** @type {string[]} */ categories,
     /** @type {string[]} */ sentences,
+    /** @type {string[]} */ comments,
 ) => Array(count).fill({}).map(() => ({
   title: titles[getRandomInt(0, titles.length - 1)],
   announce: shuffle(sentences).slice(0, getRandomInt(1, MAX_ANNOUNCE_SENTENCES_AMOUNT)).join(` `),
@@ -20,6 +25,8 @@ const generateAds = (
       new Date(new Date().getFullYear(), new Date().getMonth() - MAX_MONTHS_PERIOD, 1), new Date(),
   ),
   сategory: shuffle(categories).slice(0, getRandomInt(1, categories.length - 1)),
+  id: nanoid(ID_LENGTH),
+  comments: generateComments(comments),
 }));
 
 const doInParallelFlow = async (
@@ -35,9 +42,9 @@ module.exports = {
   async run(args) {
     const [amount] = args;
     const amountAd = Number.parseInt(amount, 10) || DEFAULT_AMOUNT;
-    const [sentences, titles, categories] = await doInParallelFlow(mockFilePaths, readContent);
+    const [sentences, titles, categories, comments] = await doInParallelFlow(mockFilePaths, readContent);
 
-    const content = JSON.stringify(generateAds(amountAd, titles, categories, sentences));
+    const content = JSON.stringify(generateAds(amountAd, titles, categories, sentences, comments));
     if (amountAd < MAX_ADS_AMOUNT) {
       try {
         await fs.writeFile(MOCK_FILENAME, content);

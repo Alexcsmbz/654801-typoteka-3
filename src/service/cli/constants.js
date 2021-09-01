@@ -5,7 +5,8 @@ const MAX_ADS_AMOUNT = 1000;
 const MAX_MONTHS_PERIOD = 3;
 const MOCK_FILENAME = `mocks.json`;
 const MAX_ANNOUNCE_SENTENCES_AMOUNT = 5;
-const mockFilePaths = [`./data/sentences.txt`, `./data/titles.txt`, `./data/categories.txt`];
+const ID_LENGTH = 6;
+const mockFilePaths = [`./data/sentences.txt`, `./data/titles.txt`, `./data/categories.txt`, `./data/comments.txt`];
 
 const DEFAULT_PORT = 3000;
 
@@ -17,4 +18,5 @@ module.exports = {
   MAX_MONTHS_PERIOD,
   mockFilePaths,
   DEFAULT_PORT,
+  ID_LENGTH,
 };
