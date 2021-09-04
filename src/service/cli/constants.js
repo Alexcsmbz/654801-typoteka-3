@@ -7,6 +7,7 @@ const MOCK_FILENAME = `mocks.json`;
 const MAX_ANNOUNCE_SENTENCES_AMOUNT = 5;
 const ID_LENGTH = 6;
 const mockFilePaths = [`./data/sentences.txt`, `./data/titles.txt`, `./data/categories.txt`, `./data/comments.txt`];
+const API_PREFIX = `/api`;
 
 const DEFAULT_PORT = 3000;
 
@@ -19,4 +20,5 @@ module.exports = {
   mockFilePaths,
   DEFAULT_PORT,
   ID_LENGTH,
+  API_PREFIX,
 };

@@ -1,13 +1,13 @@
 'use strict';
 
-const {DEFAULT_PORT} = require(`./constants`);
+const {DEFAULT_PORT, API_PREFIX} = require(`./constants`);
 const express = require(`express`);
-const {router} = require(`../router`);
+const routes = require(`../api`);
 
 const app = express();
 
 app.use(express.json());
-app.use(`/api`, router);
+app.use(API_PREFIX, routes);
 
 module.exports = {
   name: `--server`,

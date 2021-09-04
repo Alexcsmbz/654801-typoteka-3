@@ -9,7 +9,7 @@ const router = new Router();
 module.exports = (app, service) => {
   app.use(`/categories`, router);
 
-  router.get(`/`, async (req, res) => {
-    res.status(HttpCode.OK).json(await service.findAll());
+  router.get(`/`, (_, res) => {
+    res.status(HttpCode.OK).json(service.findAll());
   });
 };
