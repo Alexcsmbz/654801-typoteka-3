@@ -17,8 +17,9 @@ class ArticlesService {
   }
 
   create(article) {
-    this._articles.push({...article, id: nanoid(ID_LENGTH), comments: []});
-    return {...article, id: nanoid(ID_LENGTH), comments: []};
+    const newArticle = {...article, id: nanoid(ID_LENGTH), comments: []};
+    this._articles.push(newArticle);
+    return newArticle;
   }
 
   update(id, article) {
