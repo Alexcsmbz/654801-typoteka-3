@@ -10,7 +10,7 @@ module.exports = (app, service) => {
   app.use(`/search`, route);
 
   route.get(`/`, (req, res) => {
-    if (!req.query.query || !service.search(req.query.query)) {
+    if (!req.query.query) {
       res.status(HttpCode.BAD_REQUEST).send(`Bad request`);
       return;
     }

@@ -10,11 +10,7 @@ class SearchService {
       return item.title.toLowerCase().includes(text.toLowerCase());
     });
 
-    if (!article.length) {
-      return null;
-    }
-
-    return article;
+    return !article.length ? [] : article;
   }
 }
 
