@@ -17,21 +17,16 @@ class ArticlesService {
   }
 
   create(article) {
-    const newArticle = Object.assign({id: nanoid(ID_LENGTH), comments: []}, article);
-    this._articles.push(newArticle);
-    return newArticle;
+    this._articles.push({...article, id: nanoid(ID_LENGTH), comments: []});
+    return {...article, id: nanoid(ID_LENGTH), comments: []};
   }
 
   update(id, article) {
-    const oldArticle = this._articles.find((item) => (item.id === id));
-
-    return Object.assign(oldArticle || {id: nanoid(ID_LENGTH)}, article);
+    return {...this._articles.find((item) => (item.id === id)), ...article};
   }
 
   drop(article) {
-    this._articles = this._articles.filter((item) => {
-      return item.id !== article.id;
-    });
+    this._articles = this._articles.filter((item) => item.id !== article.id);
     return article;
   }
 
@@ -40,11 +35,8 @@ class ArticlesService {
   }
 
   createComment(article, comment) {
-    const newComment = Object.assign({id: nanoid(ID_LENGTH)}, comment);
-
-    article.comments.push(newComment);
-
-    return newComment;
+    article.comments.push({...comment, id: nanoid(ID_LENGTH)});
+    return {...comment, id: nanoid(ID_LENGTH)};
   }
 }
 

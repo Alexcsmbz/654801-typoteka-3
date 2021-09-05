@@ -1,12 +1,12 @@
 'use strict';
 
 const {Router} = require(`express`);
+const {articleKeys, commentKeys} = require(`./constants`);
 const {HttpCode} = require(`../../constants`);
 const {
-  articleValidator,
   articleExist,
   articleCommentExist,
-  articleCommentValidator,
+  keysValidator,
 } = require(`../middlewares`);
 
 // @ts-ignore
@@ -24,11 +24,11 @@ module.exports = (app, service) => {
     res.status(HttpCode.OK).json(article);
   });
 
-  route.post(`/`, articleValidator, (req, res) => {
+  route.post(`/`, (...args) => keysValidator(...args, articleKeys), (req, res) => {
     res.status(HttpCode.CREATED).json(service.create(req.body));
   });
 
-  route.put(`/:articleId`, articleExist(service), articleValidator, (req, res) => {
+  route.put(`/:articleId`, [articleExist(service), (...args) => keysValidator(...args, articleKeys)], (req, res) => {
     res.status(HttpCode.OK).json(service.update(req.params.articleId, req.body));
   });
 
@@ -48,8 +48,11 @@ module.exports = (app, service) => {
     res.status(HttpCode.OK).send(comment);
   });
 
-  route.post(`/:articleId/comments`, [articleExist(service), articleCommentValidator], (req, res) => {
-    const {article} = res.locals;
-    res.status(HttpCode.CREATED).json(service.createComment(article, req.body));
-  });
+  route.post(
+      `/:articleId/comments`,
+      [articleExist(service), (...args) => keysValidator(args, commentKeys)],
+      (req, res) => {
+        const {article} = res.locals;
+        res.status(HttpCode.CREATED).json(service.createComment(article, req.body));
+      });
 };

@@ -42,7 +42,7 @@ const getDataFromCache = () => {
       return cache;
     }
 
-    cache = await fs.readFile(pathName);
+    cache = await fs.readFile(pathName, {encoding: `utf8`});
 
     return cache;
   };
@@ -50,13 +50,11 @@ const getDataFromCache = () => {
 
 const isFileExist = (pathName) => fsSync.existsSync(path.resolve(__dirname, pathName));
 
-const getAds = getDataFromCache();
-
 module.exports = {
   getRandomInt,
   shuffle,
   getRandomDate,
   readContent,
   isFileExist,
-  getAds,
+  getDataFromCache,
 };

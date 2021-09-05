@@ -1,28 +1,22 @@
 'use strict';
 
-const {Router} = require(`express`);
-const {getAds} = require(`../cli/utils`);
+const {getDataFromCache} = require(`../cli/utils`);
 const {MOCK_FILENAME} = require(`../cli/constants`);
 const articles = require(`./articles`);
 const category = require(`./categories`);
 const search = require(`./search`);
-
 const {
   ArticlesService,
   CategoriesService,
   SearchService,
 } = require(`../data-service`);
 
+module.exports = async (routes) => {
+  const data = JSON.parse(await getDataFromCache()(MOCK_FILENAME));
 
-// @ts-ignore
-const app = new Router();
+  articles(routes, new ArticlesService(data));
+  category(routes, new CategoriesService(data));
+  search(routes, new SearchService(data));
 
-(async () => {
-  const mockData = await getAds(MOCK_FILENAME);
-
-  articles(app, new ArticlesService(mockData));
-  category(app, new CategoriesService(mockData));
-  search(app, new SearchService(mockData));
-})();
-
-module.exports = app;
+  return routes;
+};

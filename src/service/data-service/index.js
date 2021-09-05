@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 const CategoriesService = require(`./categories`);
 const SearchService = require(`./search`);

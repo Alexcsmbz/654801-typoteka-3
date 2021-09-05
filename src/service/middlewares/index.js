@@ -1,13 +1,11 @@
-"use strict";
+'use strict';
 
-const articleValidator = require(`./article-validator`);
 const articleExist = require(`./article-exist`);
 const articleCommentExist = require(`./article-comment-exist`);
-const articleCommentValidator = require(`./article-comment-validator`);
+const keysValidator = require(`./keys-validator`);
 
 module.exports = {
-  articleValidator,
   articleExist,
   articleCommentExist,
-  articleCommentValidator,
+  keysValidator,
 };

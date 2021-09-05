@@ -2,7 +2,7 @@
 
 const fs = require(`fs`).promises;
 const {MAX_ANNOUNCE_SENTENCES_AMOUNT, MAX_MONTHS_PERIOD, mockFilePaths, ID_LENGTH} = require(`./constants`);
-const {DEFAULT_AMOUNT, MOCK_FILENAME, MAX_ADS_AMOUNT} = require(`./constants`);
+const {DEFAULT_AMOUNT, MOCK_FILENAME, MAX_ARTICLES_AMOUNT} = require(`./constants`);
 const {getRandomDate, getRandomInt, shuffle, readContent} = require(`./utils`);
 const {ExitCode} = require(`src/constants`);
 const chalk = require(`chalk`);
@@ -11,7 +11,7 @@ const {nanoid} = require(`nanoid`);
 const generateComments = (/** @type {string[]} */ comments) =>
   comments.slice(0, getRandomInt(1, comments.length - 1)).map((c) => ({text: c, id: nanoid(ID_LENGTH)}));
 
-const generateAds = (
+const generateArticles = (
     /** @type {number} */ count,
     /** @type {string[]} */ titles,
     /** @type {string[]} */ categories,
@@ -24,7 +24,7 @@ const generateAds = (
   createdDate: getRandomDate(
       new Date(new Date().getFullYear(), new Date().getMonth() - MAX_MONTHS_PERIOD, 1), new Date(),
   ),
-  сategory: shuffle(categories).slice(0, getRandomInt(1, categories.length - 1)),
+  category: shuffle(categories).slice(0, getRandomInt(1, categories.length - 1)),
   id: nanoid(ID_LENGTH),
   comments: generateComments(comments),
 }));
@@ -41,11 +41,11 @@ module.exports = {
    */
   async run(args) {
     const [amount] = args;
-    const amountAd = Number.parseInt(amount, 10) || DEFAULT_AMOUNT;
+    const articlesAmount = Number.parseInt(amount, 10) || DEFAULT_AMOUNT;
     const [sentences, titles, categories, comments] = await doInParallelFlow(mockFilePaths, readContent);
 
-    const content = JSON.stringify(generateAds(amountAd, titles, categories, sentences, comments));
-    if (amountAd < MAX_ADS_AMOUNT) {
+    const content = JSON.stringify(generateArticles(articlesAmount, titles, categories, sentences, comments));
+    if (articlesAmount < MAX_ARTICLES_AMOUNT) {
       try {
         await fs.writeFile(MOCK_FILENAME, content);
         console.log(chalk.green(`Operation success. File created.`));
