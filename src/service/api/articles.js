@@ -50,7 +50,7 @@ module.exports = (app, service) => {
 
   route.post(
       `/:articleId/comments`,
-      [articleExist(service), (...args) => keysValidator(args, commentKeys)],
+      [articleExist(service), (...args) => keysValidator(...args, commentKeys)],
       (req, res) => {
         const {article} = res.locals;
         res.status(HttpCode.CREATED).json(service.createComment(article, req.body));

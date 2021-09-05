@@ -22,7 +22,7 @@ class ArticlesService {
   }
 
   update(id, article) {
-    return {...this._articles.find((item) => (item.id === id)), ...article};
+    return Object.assign(this._articles.find((item) => (item.id === id)) || {id: nanoid(ID_LENGTH)}, article);
   }
 
   drop(article) {
