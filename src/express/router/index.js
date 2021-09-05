@@ -1,10 +1,10 @@
-"use strict";
+'use strict';
 
 const {Router} = require(`express`);
-const {articlesRouter} = require(`../router/articles`);
-const {categoriesRouter} = require(`../router/categories`);
-const {myRouter} = require(`../router/my`);
-const {commonRouter} = require(`../router/common`);
+const {articlesRouter} = require(`./articles`);
+const {categoriesRouter} = require(`./categories`);
+const {myRouter} = require(`./my`);
+const {commonRouter} = require(`./common`);
 // @ts-ignore
 const router = new Router();
 

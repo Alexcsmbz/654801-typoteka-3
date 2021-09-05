@@ -3,6 +3,8 @@
 const fs = require(`fs`).promises;
 const dayjs = require(`dayjs`);
 const chalk = require(`chalk`);
+const fsSync = require(`fs`);
+const path = require(`path`);
 
 const getRandomInt = (/** @type {number} */ min, /** @type {number} */ max) =>
   Math.floor(Math.random() * (max - min + 1) + min);
@@ -32,9 +34,27 @@ const readContent = async (/** @type {string} */ filePath) => {
   }
 };
 
+const getDataFromCache = () => {
+  let cache = null;
+
+  return async (pathName) => {
+    if (cache) {
+      return cache;
+    }
+
+    cache = await fs.readFile(pathName, {encoding: `utf8`});
+
+    return cache;
+  };
+};
+
+const isFileExist = (pathName) => fsSync.existsSync(path.resolve(__dirname, pathName));
+
 module.exports = {
   getRandomInt,
   shuffle,
   getRandomDate,
   readContent,
+  isFileExist,
+  getDataFromCache,
 };
