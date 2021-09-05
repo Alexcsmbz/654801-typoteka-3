@@ -36,8 +36,9 @@ class ArticlesService {
   }
 
   createComment(article, comment) {
-    article.comments.push({...comment, id: nanoid(ID_LENGTH)});
-    return {...comment, id: nanoid(ID_LENGTH)};
+    const newComment = {...comment, id: nanoid(ID_LENGTH)};
+    article.comments.push(newComment);
+    return newComment;
   }
 }
 
