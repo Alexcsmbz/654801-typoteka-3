@@ -34,6 +34,7 @@
     "jest": "27.1.0",
     "module-alias": "2.2.2",
     "nodemon": "2.0.12",
+    "pino-pretty": "6.0.0",
     "pug-lint": "2.6.0",
     "supertest": "6.1.6"
   },
@@ -41,6 +42,7 @@
     "chalk": "4.1.2",
     "express": "4.17.1",
     "nanoid": "3.1.25",
+    "pino": "6.13.2",
     "pug": "3.0.2"
   }
 }
