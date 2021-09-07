@@ -5,7 +5,7 @@ const express = require(`express`);
 
 const request = require(`supertest`);
 const category = require(`./categories`);
-const CategoriesService = require(`../data-service/categories`);
+const {CategoriesService} = require(`../data-service`);
 const {HttpCode} = require(`../../constants`);
 
 const data = [

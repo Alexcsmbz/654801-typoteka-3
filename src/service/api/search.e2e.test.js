@@ -4,7 +4,7 @@ const express = require(`express`);
 const request = require(`supertest`);
 
 const search = require(`./search`);
-const SearchService = require(`../data-service/search`);
+const {SearchService} = require(`../data-service`);
 const {HttpCode} = require(`../../constants`);
 
 const data = [
