@@ -5,6 +5,7 @@ const express = require(`express`);
 const initRoutes = require(`../api`);
 const {Router} = require(`express`);
 const {getLogger} = require(`../lib`);
+const {clientError, serverError, requestInfo} = require(`../middlewares`);
 
 module.exports = {
   name: `--server`,
@@ -21,6 +22,9 @@ module.exports = {
 
     app.use(express.json());
     app.use(API_PREFIX, await initRoutes(routes));
+    app.use(clientError);
+    app.use(serverError);
+    app.use(requestInfo);
 
     try {
       app.listen(port, (err) => {
