@@ -12,4 +12,7 @@ rules:
   # object-curly-newline: ["error", "always"]
   # object-property-newline: ["error", { "allowAllPropertiesOnSameLine": true }]
 
+ignorePatterns:
+  '**/express/public/**/*.js'
+
 extends: 'htmlacademy/node'

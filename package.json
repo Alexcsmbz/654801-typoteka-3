@@ -6,7 +6,8 @@
   "scripts": {
     "test": "npm run eslint && npm run jest",
     "jest": "jest",
-    "start": "node ./src/service/service.js",
+    "start": "cross-env NODE_ENV=production node ./src/service/service.js",
+    "start::debug": "cross-env NODE_ENV=development node ./src/service/service.js",
     "server": "nodemon ./src/service/service.js --server",
     "generate": "node ./src/service/service.js --generate",
     "eslint": "eslint --ext .js src/",
@@ -40,6 +41,7 @@
   },
   "dependencies": {
     "chalk": "4.1.2",
+    "cross-env": "7.0.3",
     "express": "4.17.1",
     "nanoid": "3.1.25",
     "pino": "6.13.2",
