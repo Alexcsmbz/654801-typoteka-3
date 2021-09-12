@@ -1,9 +1,9 @@
 'use strict';
 
-const {nanoid} = require(`nanoid`);
-const {UPLOAD_IMAGES_DIR} = require(`./constants`);
-const path = require(`path`);
 const multer = require(`multer`);
+const path = require(`path`);
+const {nanoid} = require(`nanoid`);
+const {UPLOAD_IMAGES_DIR} = require(`../constants`);
 
 const uploadDirAbsolute = path.resolve(__dirname, UPLOAD_IMAGES_DIR);
 
@@ -16,4 +16,6 @@ const storage = multer.diskStorage({
   },
 });
 
-module.exports = storage;
+const upload = multer({storage});
+
+module.exports = upload;
