@@ -1,20 +1,11 @@
 'use strict';
 
-const axios = require(`axios`);
-const {defaultUrl, TIMEOUT} = require(`./constants`);
+const {defaultUrl, TIMEOUT} = require(`../constants`);
+const API = require(`./api`);
 
-class API {
+class ArticlesAPI extends API {
   constructor(baseURL, timeout) {
-    // @ts-ignore
-    this._http = axios.create({
-      baseURL,
-      timeout,
-    });
-  }
-
-  async _load(url, options) {
-    const response = await this._http.request({url, ...options});
-    return response.data;
+    super(baseURL, timeout);
   }
 
   getArticles() {
@@ -49,9 +40,4 @@ class API {
   }
 }
 
-const defaultAPI = new API(defaultUrl, TIMEOUT);
-
-module.exports = {
-  API,
-  getAPI: () => defaultAPI,
-};
+module.exports = new ArticlesAPI(defaultUrl, TIMEOUT);
