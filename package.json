@@ -8,10 +8,11 @@
     "jest": "jest",
     "start": "cross-env NODE_ENV=production node ./src/service/service.js",
     "start::debug": "cross-env NODE_ENV=development node ./src/service/service.js",
-    "server": "nodemon ./src/service/service.js --server",
+    "server": "npm run start::debug -- --server",
     "generate": "node ./src/service/service.js --generate",
     "eslint": "eslint --ext .js src/",
-    "start-front-server": "nodemon ./src/express/express.js"
+    "start-front-server": "nodemon ./src/express/express.js",
+    "start-app": "concurrently --kill-others \"npm run server\" \"npm run start-front-server\""
   },
   "_moduleAliases": {
     "service": "src/service",
@@ -29,6 +30,7 @@
   "homepage": "https://github.com/Alexcsmbz/654801-typoteka-3#readme",
   "devDependencies": {
     "@types/jest": "27.0.1",
+    "concurrently": "6.2.1",
     "dayjs": "1.10.6",
     "eslint": "7.32.0",
     "eslint-config-htmlacademy": "0.6.0",
@@ -40,9 +42,11 @@
     "supertest": "6.1.6"
   },
   "dependencies": {
+    "axios": "0.21.4",
     "chalk": "4.1.2",
     "cross-env": "7.0.3",
     "express": "4.17.1",
+    "multer": "1.4.3",
     "nanoid": "3.1.25",
     "pino": "6.13.2",
     "pug": "3.0.2"

@@ -24,6 +24,9 @@ const generateArticles = (
   createdDate: getRandomDate(
       new Date(new Date().getFullYear(), new Date().getMonth() - MAX_MONTHS_PERIOD, 1), new Date(),
   ),
+  img: {
+    src: `https://picsum.photos/200/300`,
+  },
   category: shuffle(categories).slice(0, getRandomInt(1, categories.length - 1)),
   id: nanoid(ID_LENGTH),
   comments: generateComments(comments),
