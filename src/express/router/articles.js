@@ -29,11 +29,15 @@ router.post(
       }
     },
 );
-router.get(`/edit/:id`, async (req, res) => res.render(`edit-post`, {
-  article: await articlesApi.getArticleById(req.params.id),
-  categories: await articlesApi.getCategories(),
-  comments: await articlesApi.getCommentsById(req.params.id),
-}));
+router.get(`/edit/:id`, async (req, res) => {
+  const [article, categories, comments] = await Promise.all([
+    articlesApi.getArticleById(req.params.id),
+    articlesApi.getCategories(),
+    articlesApi.getCommentsById(req.params.id),
+  ]);
+
+  return res.render(`edit-post`, {article, categories, comments});
+});
 router.get(`/:id`, (_, res) => res.render(`post`));
 
 module.exports = {articlesRouter: router};
