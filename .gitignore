@@ -17,3 +17,4 @@ build/
 mocks.json
 src/express/upload
 Makefile
+.env

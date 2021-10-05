@@ -6,6 +6,7 @@ const initRoutes = require(`../api`);
 const {Router} = require(`express`);
 const {getLogger} = require(`../lib`);
 const {clientError, serverError, requestInfo} = require(`../middlewares`);
+const sequelize = require(`../lib/sequelize`);
 
 module.exports = {
   name: `--server`,
@@ -25,6 +26,16 @@ module.exports = {
     app.use(clientError);
     app.use(serverError);
     app.use(requestInfo);
+
+    try {
+      logger.info(`Trying to connect to database...`);
+      await sequelize.authenticate();
+    } catch (err) {
+      logger.error(`An error occurred: ${err.message}`);
+      process.exit(1);
+    }
+
+    logger.info(`Connection to database established`);
 
     try {
       app.listen(port, (err) => {
