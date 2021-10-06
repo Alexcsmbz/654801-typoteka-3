@@ -1,44 +1,43 @@
 'use strict';
 
-const {nanoid} = require(`nanoid`);
-const {ID_LENGTH} = require(`../cli/constants`);
+const {Aliase} = require(`../models/constants`);
 
 class ArticlesService {
-  constructor(articles) {
-    this._articles = articles;
+  constructor(sequelize) {
+    this._Article = sequelize.models.Article;
+    this._Comment = sequelize.models.Comment;
+    this._Category = sequelize.models.Category;
   }
 
-  findAll() {
-    return this._articles;
+  async create(data) {
+    const article = await this._Article.create(data);
+    await article.addCategories(article.categories);
+    return article.get();
   }
 
-  findOne(id) {
-    return this._articles.find((article) => article.id === id);
+  async drop(id) {
+    const deletedRows = await this._Article.destroy({where: {id}});
+    return !!deletedRows;
   }
 
-  create(article) {
-    const newArticle = {...article, id: nanoid(ID_LENGTH), comments: []};
-    this._articles.push(newArticle);
-    return newArticle;
+  async findOne(id) {
+    return this._Article.findByPk(id, {include: [Aliase.CATEGORIES]});
   }
 
-  update(id, article) {
-    return Object.assign(this._articles.find((item) => (item.id === id)) || {id: nanoid(ID_LENGTH)}, article);
+  async findAll(withComments) {
+    const include = [Aliase.CATEGORIES];
+
+    if (withComments) {
+      include.push(Aliase.COMMENTS);
+    }
+
+    const articles = await this._Article.findAll({include, order: [[`createdAt`, `DESC`]]});
+    return articles.map((a) => a.get());
   }
 
-  drop(article) {
-    this._articles = this._articles.filter((item) => item.id !== article.id);
-    return article;
-  }
-
-  dropComment(article, comment) {
-    article.comments = article.comments.filter((item) => (item.id !== comment.id));
-  }
-
-  createComment(article, comment) {
-    const newComment = {...comment, id: nanoid(ID_LENGTH)};
-    article.comments.push(newComment);
-    return newComment;
+  async update(id, article) {
+    const [affectedRows] = await this._Article.update(article, {where: {id}});
+    return !!affectedRows;
   }
 }
 

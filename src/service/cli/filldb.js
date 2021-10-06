@@ -84,8 +84,8 @@ module.exports = {
     const articles = generateArticles(articlesAmount, titles, categoryModels, sentences, comments);
 
     const articlePromises = articles.map(async (a) => {
-      const offerModel = await Article.create(a, {include: [Aliase.COMMENTS]});
-      await offerModel.addCategories(a.categories);
+      const articleModel = await Article.create(a, {include: [Aliase.COMMENTS]});
+      await articleModel.addCategories(a.categories);
     });
 
     if (articlesAmount < MAX_ARTICLES_AMOUNT) {
