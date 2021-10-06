@@ -1,7 +1,5 @@
 'use strict';
 
-const {getDataFromCache} = require(`../cli/utils`);
-const {MOCK_FILENAME} = require(`../cli/constants`);
 const articles = require(`./articles`);
 const category = require(`./categories`);
 const search = require(`./search`);
@@ -10,13 +8,15 @@ const {
   CategoriesService,
   SearchService,
 } = require(`../data-service`);
+const sequelize = require(`../lib/sequelize`);
+const defineModels = require(`../models`);
+
+defineModels(sequelize);
 
 module.exports = async (routes) => {
-  const data = JSON.parse(await getDataFromCache()(MOCK_FILENAME));
-
-  articles(routes, new ArticlesService(data));
-  category(routes, new CategoriesService(data));
-  search(routes, new SearchService(data));
+  articles(routes, new ArticlesService(sequelize));
+  category(routes, new CategoriesService(sequelize));
+  search(routes, new SearchService(sequelize));
 
   return routes;
 };
