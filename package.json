@@ -10,6 +10,7 @@
     "start::debug": "cross-env LOG_LEVEL=info NODE_ENV=development node -r dotenv/config ./src/service/service.js",
     "server": "npm run start::debug -- --server",
     "generate": "node ./src/service/service.js --generate",
+    "filldb": "node -r dotenv/config ./src/service/service.js --filldb",
     "eslint": "eslint --ext .js src/",
     "start-front-server": "nodemon ./src/express/express.js",
     "start-app": "concurrently --kill-others \"npm run server\" \"npm run start-front-server\""
