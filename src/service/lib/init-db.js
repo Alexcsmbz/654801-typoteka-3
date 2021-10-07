@@ -9,7 +9,7 @@ module.exports = async (sequelize, {categories, articles}) => {
 
   const categoryModels = await Category.bulkCreate(categories.map((name) => ({name})));
 
-  const categoryIdByName = categoryModels.reduce((acc, next) => ({[next.name]: next.id, ...acc}), {});
+  const categoryIdByName = categoryModels.reduce((acc, it) => ({[it.name]: it.id, ...acc}), {});
 
   const articlePromises = articles.map(async (article) => {
     const articleModel = await Article.create(article, {include: [Aliase.COMMENTS]});

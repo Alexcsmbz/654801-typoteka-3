@@ -2,14 +2,13 @@
 
 const sequelize = require(`../lib/sequelize`);
 const {getLogger} = require(`../lib`);
-const {MAX_ANNOUNCE_SENTENCES_AMOUNT, MAX_MONTHS_PERIOD, mockFilePaths, ID_LENGTH} = require(`./constants`);
+const {MAX_ANNOUNCE_SENTENCES_AMOUNT, mockFilePaths} = require(`./constants`);
 const {DEFAULT_AMOUNT} = require(`./constants`);
-const {getRandomDate, getRandomInt, shuffle, readContent} = require(`./utils`);
-const {nanoid} = require(`nanoid`);
+const {getRandomInt, shuffle, readContent} = require(`./utils`);
 const initDatabase = require(`../lib/init-db`);
 
 const generateComments = (/** @type {string[]} */ comments) =>
-  comments.slice(0, getRandomInt(1, comments.length - 1)).map((c) => ({text: c, id: nanoid(ID_LENGTH)}));
+  comments.slice(0, getRandomInt(1, comments.length - 1)).map((text) => ({text}));
 
 const generateArticles = (
     /** @type {number} */ count,
@@ -21,14 +20,8 @@ const generateArticles = (
   title: titles[getRandomInt(0, titles.length - 1)],
   announce: shuffle(sentences).slice(0, getRandomInt(1, MAX_ANNOUNCE_SENTENCES_AMOUNT)).join(` `),
   fullText: shuffle(sentences).slice(0, sentences.length - 1).join(` `),
-  createdDate: getRandomDate(
-      new Date(new Date().getFullYear(), new Date().getMonth() - MAX_MONTHS_PERIOD, 1), new Date(),
-  ),
-  img: {
-    src: `https://picsum.photos/200/300`,
-  },
+  img: `https://picsum.photos/200/300`,
   categories: getRandomSubarray(categories),
-  id: nanoid(ID_LENGTH),
   comments: generateComments(comments),
 }));
 

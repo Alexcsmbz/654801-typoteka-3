@@ -1,9 +1,9 @@
 'use strict';
 
 const fs = require(`fs`).promises;
-const {MAX_ANNOUNCE_SENTENCES_AMOUNT, MAX_MONTHS_PERIOD, mockFilePaths, ID_LENGTH} = require(`./constants`);
+const {MAX_ANNOUNCE_SENTENCES_AMOUNT, mockFilePaths, ID_LENGTH} = require(`./constants`);
 const {DEFAULT_AMOUNT, MOCK_FILENAME, MAX_ARTICLES_AMOUNT} = require(`./constants`);
-const {getRandomDate, getRandomInt, shuffle, readContent} = require(`./utils`);
+const {getRandomInt, shuffle, readContent} = require(`./utils`);
 const {ExitCode} = require(`src/constants`);
 const chalk = require(`chalk`);
 const {nanoid} = require(`nanoid`);
@@ -21,14 +21,8 @@ const generateArticles = (
   title: titles[getRandomInt(0, titles.length - 1)],
   announce: shuffle(sentences).slice(0, getRandomInt(1, MAX_ANNOUNCE_SENTENCES_AMOUNT)).join(` `),
   fullText: shuffle(sentences).slice(0, sentences.length - 1).join(` `),
-  createdDate: getRandomDate(
-      new Date(new Date().getFullYear(), new Date().getMonth() - MAX_MONTHS_PERIOD, 1), new Date(),
-  ),
-  img: {
-    src: `https://picsum.photos/200/300`,
-  },
-  category: shuffle(categories).slice(0, getRandomInt(1, categories.length - 1)),
-  id: nanoid(ID_LENGTH),
+  img: `https://picsum.photos/200/300`,
+  categories: shuffle(categories).slice(0, getRandomInt(1, categories.length - 1)),
   comments: generateComments(comments),
 }));
 
