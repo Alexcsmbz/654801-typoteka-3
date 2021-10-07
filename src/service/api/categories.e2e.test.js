@@ -2,13 +2,19 @@
 'use strict';
 
 const express = require(`express`);
-
 const request = require(`supertest`);
 const category = require(`./categories`);
 const {CategoriesService} = require(`../data-service`);
 const {HttpCode} = require(`../../constants`);
+const Sequelize = require(`sequelize`);
+const initDB = require(`../lib/init-db`);
+// @ts-ignore
+const mockDB = new Sequelize(`sqlite::memory:`, {logging: false});
 
-const data = [
+const app = express();
+app.use(express.json());
+
+const articles = [
   {
     id: `8MfXha`,
     title: `Как достигнуть успеха не вставая с кресла`,
@@ -121,35 +127,26 @@ const data = [
   },
 ];
 
-const app = express();
-app.use(express.json());
-
-category(app, new CategoriesService(data));
+const categories = [
+  `Животные`,
+  `Журналы`,
+  `Игры`,
+];
 
 describe(`API returns category list`, () => {
   let response;
 
   beforeAll(async () => {
-    response = await request(app)
-      .get(`/categories`);
+    response = await request(app).get(`/categories`);
+    await initDB(mockDB, {categories, articles});
+    category(app, new CategoriesService(articles));
   });
 
+
   test(`Status code 200`, () => expect(response.status).toBe(HttpCode.OK));
-  test(`Returns list of 11 categories`, () => expect(response.body.length).toBe(11));
-  test(`Category names are in list`, () => {
-    expect.arrayContaining([
-      `Деревья`,
-      `За жизнь`,
-      `Без рамки`,
-      `Разное`,
-      `IT`,
-      `Музыка`,
-      `Кино`,
-      `Программирование`,
-      `Железо`,
-      `Домино`,
-      `Гастроном`,
-      `Вкусно`,
-    ]);
-  });
+  test(`Returns list of 3 categories`, () => expect(response.body.length).toBe(3));
+  test(`Category names are in list`, () => expect(response.body.map((it) => it.name)).toEqual(
+      expect.arrayContaining([`Журналы`, `Игры`, `Животные`]),
+  ),
+  );
 });

@@ -2,12 +2,18 @@
 
 const express = require(`express`);
 const request = require(`supertest`);
-
 const search = require(`./search`);
 const {SearchService} = require(`../data-service`);
 const {HttpCode} = require(`../../constants`);
+const Sequelize = require(`sequelize`);
+const initDB = require(`../lib/init-db`);
+// @ts-ignore
+const mockDB = new Sequelize(`sqlite::memory:`, {logging: false});
 
-const data = [
+const app = express();
+app.use(express.json());
+
+const articles = [
   {
     title: `Борьба с прокрастинацией`,
     announce: `Простые ежедневные упражнения помогут достичь успеха. 
@@ -34,26 +40,24 @@ const data = [
   },
 ];
 
-const app = express();
-
-app.use(express.json());
-search(app, new SearchService(data));
+const categories = [
+  `Животные`,
+  `Журналы`,
+  `Игры`,
+];
 
 describe(`API returns articles based on search query`, () => {
   let response;
 
   beforeAll(async () => {
-    response = await request(app)
-      .get(`/search`)
-      .query({
-        query: `Борьба`,
-      });
+    response = await request(app).get(`/search`).query({query: `Борьба`});
+    await initDB(mockDB, {categories, articles});
+    search(app, new SearchService(articles));
   });
 
   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
   test(`1 articles found`, () => expect(response.body.length).toBe(1));
-  test(`Articles has correct id`, () => expect(response.body[0].id).toBe(`UESGQa`));
+  test(`Article has correct title`, () => expect(response.body[0].title).toBe(`Борьба с прокрастинацией`));
 });
 
-test(`API returns 400 when query string is absent`, () => request(app).get(`/search`)
-  .expect(HttpCode.BAD_REQUEST));
+test(`API returns 400 when query string is absent`, () => request(app).get(`/search`).expect(HttpCode.BAD_REQUEST));

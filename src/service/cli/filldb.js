@@ -1,15 +1,12 @@
 'use strict';
 
 const sequelize = require(`../lib/sequelize`);
-const defineModels = require(`../models`);
-const {Aliase} = require(`../models/constants`);
 const {getLogger} = require(`../lib`);
 const {MAX_ANNOUNCE_SENTENCES_AMOUNT, MAX_MONTHS_PERIOD, mockFilePaths, ID_LENGTH} = require(`./constants`);
-const {DEFAULT_AMOUNT, MAX_ARTICLES_AMOUNT} = require(`./constants`);
+const {DEFAULT_AMOUNT} = require(`./constants`);
 const {getRandomDate, getRandomInt, shuffle, readContent} = require(`./utils`);
-const chalk = require(`chalk`);
 const {nanoid} = require(`nanoid`);
-const {ExitCode} = require(`src/constants`);
+const initDatabase = require(`../lib/init-db`);
 
 const generateComments = (/** @type {string[]} */ comments) =>
   comments.slice(0, getRandomInt(1, comments.length - 1)).map((c) => ({text: c, id: nanoid(ID_LENGTH)}));
@@ -75,27 +72,8 @@ module.exports = {
 
     logger.info(`Connection to database established`);
 
-    const {Category, Article} = defineModels(sequelize);
+    const articles = generateArticles(articlesAmount, titles, categories, sentences, comments);
 
-    await sequelize.sync({force: true});
-
-    const categoryModels = await Category.bulkCreate(categories.map((name) => ({name})));
-
-    const articles = generateArticles(articlesAmount, titles, categoryModels, sentences, comments);
-
-    const articlePromises = articles.map(async (a) => {
-      const articleModel = await Article.create(a, {include: [Aliase.COMMENTS]});
-      await articleModel.addCategories(a.categories);
-    });
-
-    if (articlesAmount < MAX_ARTICLES_AMOUNT) {
-      try {
-        await Promise.all(articlePromises);
-        console.log(chalk.green(`Operation success. Database is filled.`));
-      } catch (e) {
-        console.error(chalk.red(`Can't write data to db...`));
-        process.exit(ExitCode.ERROR);
-      }
-    }
+    return initDatabase(sequelize, {articles, categories});
   },
 };
