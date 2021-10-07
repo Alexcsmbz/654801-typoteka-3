@@ -38,6 +38,8 @@ router.get(`/edit/:id`, async (req, res) => {
 
   return res.render(`edit-post`, {article, categories, comments});
 });
-router.get(`/:id`, (_, res) => res.render(`post`));
+router.get(`/:id`, async (req, res) => {
+  res.render(`post`, {article: await articlesApi.getArticleById(req.params.id, true)});
+});
 
 module.exports = {articlesRouter: router};
