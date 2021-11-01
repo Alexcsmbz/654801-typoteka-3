@@ -13,6 +13,8 @@ const mockDB = new Sequelize(`sqlite::memory:`, {logging: false});
 const app = express();
 app.use(express.json());
 
+const categories = [`Железо`, `Без рамки`, `Деревья`];
+
 const articles = [
   {
     title: `Борьба с прокрастинацией`,
@@ -36,19 +38,15 @@ const articles = [
   },
 ];
 
-const categories = [
-  `Животные`,
-  `Журналы`,
-  `Игры`,
-];
 
 describe(`API returns articles based on search query`, () => {
   let response;
 
   beforeAll(async () => {
+    const sec = await initDB(mockDB, {categories, articles});
+    const service = new SearchService(sec);
+    search(app, service);
     response = await request(app).get(`/search`).query({query: `Борьба`});
-    await initDB(mockDB, {categories, articles});
-    search(app, new SearchService(articles));
   });
 
   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));

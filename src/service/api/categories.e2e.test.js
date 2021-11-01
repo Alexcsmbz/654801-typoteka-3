@@ -125,11 +125,11 @@ describe(`API returns category list`, () => {
   let response;
 
   beforeAll(async () => {
+    const sec = await initDB(mockDB, {categories, articles});
+    const service = new CategoriesService(sec);
+    category(app, service);
     response = await request(app).get(`/categories`);
-    await initDB(mockDB, {categories, articles});
-    category(app, new CategoriesService(articles));
   });
-
 
   test(`Status code 200`, () => expect(response.status).toBe(HttpCode.OK));
   test(`Returns list of 3 categories`, () => expect(response.body.length).toBe(3));
