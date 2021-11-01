@@ -10,6 +10,7 @@
     "start::debug": "cross-env LOG_LEVEL=info NODE_ENV=development node -r dotenv/config ./src/service/service.js",
     "server": "npm run start::debug -- --server",
     "generate": "node ./src/service/service.js --generate",
+    "filldb": "node -r dotenv/config ./src/service/service.js --filldb",
     "eslint": "eslint --ext .js src/",
     "start-front-server": "nodemon ./src/express/express.js",
     "start-app": "concurrently --kill-others \"npm run server\" \"npm run start-front-server\""
@@ -39,6 +40,7 @@
     "nodemon": "2.0.12",
     "pino-pretty": "6.0.0",
     "pug-lint": "2.6.0",
+    "sqlite3": "5.0.2",
     "supertest": "6.1.6"
   },
   "dependencies": {

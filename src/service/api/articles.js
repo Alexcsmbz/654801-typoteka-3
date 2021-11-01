@@ -15,8 +15,8 @@ const route = new Router();
 module.exports = (app, service) => {
   app.use(`/articles`, route);
 
-  route.get(`/`, (_, res) => {
-    res.status(HttpCode.OK).json(service.findAll());
+  route.get(`/`, async (req, res) => {
+    res.status(HttpCode.OK).json(await service.findAll(req.query.comments));
   });
 
   route.get(`/:articleId`, articleExist(service), (_, res) => {
@@ -24,17 +24,21 @@ module.exports = (app, service) => {
     res.status(HttpCode.OK).json(article);
   });
 
-  route.post(`/`, (...args) => keysValidator(...args, articleKeys), (req, res) => {
-    res.status(HttpCode.CREATED).json(service.create(req.body));
+  route.post(`/`, (...args) => keysValidator(...args, articleKeys), async (req, res) => {
+    res.status(HttpCode.CREATED).json(await service.create(req.body));
   });
 
-  route.put(`/:articleId`, [articleExist(service), (...args) => keysValidator(...args, articleKeys)], (req, res) => {
-    res.status(HttpCode.OK).json(service.update(req.params.articleId, req.body));
-  });
+  route.put(
+      `/:articleId`,
+      [articleExist(service), (...args) => keysValidator(...args, articleKeys)],
+      async (req, res) => {
+        res.status(HttpCode.OK).json(await service.update(req.params.articleId, req.body));
+      },
+  );
 
-  route.delete(`/:articleId`, articleExist(service), (_, res) => {
+  route.delete(`/:articleId`, articleExist(service), async (_, res) => {
     const {article} = res.locals;
-    res.status(HttpCode.OK).send(service.drop(article));
+    res.status(HttpCode.OK).send(await service.drop(article));
   });
 
   route.get(`/:articleId/comments`, articleExist(service), (_, res) => {
@@ -42,17 +46,17 @@ module.exports = (app, service) => {
     res.status(HttpCode.OK).json(article.comments);
   });
 
-  route.delete(`/:articleId/comments/:commentId`, [articleExist(service), articleCommentExist], (_, res) => {
+  route.delete(`/:articleId/comments/:commentId`, [articleExist(service), articleCommentExist], async (_, res) => {
     const {article, comment} = res.locals;
-    service.dropComment(article, comment);
+    await service.dropComment(article, comment);
     res.status(HttpCode.OK).send(comment);
   });
 
   route.post(
       `/:articleId/comments`,
       [articleExist(service), (...args) => keysValidator(...args, commentKeys)],
-      (req, res) => {
+      async (req, res) => {
         const {article} = res.locals;
-        res.status(HttpCode.CREATED).json(service.createComment(article, req.body));
+        res.status(HttpCode.CREATED).json(await service.createComment(article, req.body));
       });
 };

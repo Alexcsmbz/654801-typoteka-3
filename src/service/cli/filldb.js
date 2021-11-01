@@ -1,15 +1,14 @@
 'use strict';
 
-const fs = require(`fs`).promises;
-const {MAX_ANNOUNCE_SENTENCES_AMOUNT, mockFilePaths, ID_LENGTH} = require(`./constants`);
-const {DEFAULT_AMOUNT, MOCK_FILENAME, MAX_ARTICLES_AMOUNT} = require(`./constants`);
+const sequelize = require(`../lib/sequelize`);
+const {getLogger} = require(`../lib`);
+const {MAX_ANNOUNCE_SENTENCES_AMOUNT, mockFilePaths} = require(`./constants`);
+const {DEFAULT_AMOUNT} = require(`./constants`);
 const {getRandomInt, shuffle, readContent} = require(`./utils`);
-const {ExitCode} = require(`src/constants`);
-const chalk = require(`chalk`);
-const {nanoid} = require(`nanoid`);
+const initDatabase = require(`../lib/init-db`);
 
 const generateComments = (/** @type {string[]} */ comments) =>
-  comments.slice(0, getRandomInt(1, comments.length - 1)).map((c) => ({text: c, id: nanoid(ID_LENGTH)}));
+  comments.slice(0, getRandomInt(1, comments.length - 1)).map((text) => ({text}));
 
 const generateArticles = (
     /** @type {number} */ count,
@@ -22,7 +21,7 @@ const generateArticles = (
   announce: shuffle(sentences).slice(0, getRandomInt(1, MAX_ANNOUNCE_SENTENCES_AMOUNT)).join(` `),
   fullText: shuffle(sentences).slice(0, sentences.length - 1).join(` `),
   img: `https://picsum.photos/200/300`,
-  categories: shuffle(categories).slice(0, getRandomInt(1, categories.length - 1)),
+  categories: getRandomSubarray(categories),
   comments: generateComments(comments),
 }));
 
@@ -31,8 +30,22 @@ const doInParallelFlow = async (
     /** @type {(item: any) => Promise<any>} */ getItem,
 ) => await Promise.all(items.map(async (item) => await getItem(item)));
 
+const getRandomSubarray = (items) => {
+  items = items.slice();
+  let count = getRandomInt(1, items.length - 1);
+  const result = [];
+  while (count--) {
+    result.push(
+        ...items.splice(
+            getRandomInt(0, items.length - 1), 1,
+        ),
+    );
+  }
+  return result;
+};
+
 module.exports = {
-  name: `--generate`,
+  name: `--filldb`,
   /**
    * @param {string[] | [any]} [args]
    */
@@ -40,16 +53,20 @@ module.exports = {
     const [amount] = args;
     const articlesAmount = Number.parseInt(amount, 10) || DEFAULT_AMOUNT;
     const [sentences, titles, categories, comments] = await doInParallelFlow(mockFilePaths, readContent);
+    const logger = getLogger({name: `api`});
 
-    const content = JSON.stringify(generateArticles(articlesAmount, titles, categories, sentences, comments));
-    if (articlesAmount < MAX_ARTICLES_AMOUNT) {
-      try {
-        await fs.writeFile(MOCK_FILENAME, content);
-        console.log(chalk.green(`Operation success. File created.`));
-      } catch (e) {
-        console.error(chalk.red(`Can't write data to file...`));
-        process.exit(ExitCode.ERROR);
-      }
+    try {
+      logger.info(`Trying to connect to database...`);
+      await sequelize.authenticate();
+    } catch (err) {
+      logger.error(`An error occurred: ${err.message}`);
+      process.exit(1);
     }
+
+    logger.info(`Connection to database established`);
+
+    const articles = generateArticles(articlesAmount, titles, categories, sentences, comments);
+
+    return initDatabase(sequelize, {articles, categories});
   },
 };

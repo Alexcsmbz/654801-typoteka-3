@@ -9,12 +9,12 @@ const route = new Router();
 module.exports = (app, service) => {
   app.use(`/search`, route);
 
-  route.get(`/`, (req, res) => {
+  route.get(`/`, async (req, res) => {
     if (!req.query.query) {
       res.status(HttpCode.BAD_REQUEST).send(`Bad request`);
       return;
     }
 
-    res.status(HttpCode.OK).json(service.search(req.query.query));
+    res.status(HttpCode.OK).json(await service.search(req.query.query));
   });
 };

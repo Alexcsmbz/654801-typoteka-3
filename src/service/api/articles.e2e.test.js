@@ -5,15 +5,16 @@ const articles = require(`./articles`);
 const {ArticlesService} = require(`../data-service`);
 const request = require(`supertest`);
 const {HttpCode} = require(`../../constants`);
+const Sequelize = require(`sequelize`);
+const initDB = require(`../lib/init-db`);
 
-const data = [
+const mockArticles = [
   {
-    id: `8MfXha`,
     title: `Как достигнуть успеха не вставая с кресла`,
-    createdDate: `2021-06-11 20:14:23`,
     announce: `Вы можете достичь всего.`,
     fullText: `Альбом стал настоящим открытием года.`,
-    category: [
+    img: ``,
+    categories: [
       `Вкусно`,
       `IT`,
       `Кино`,
@@ -23,34 +24,28 @@ const data = [
     ],
     comments: [
       {
-        id: `wuadOQ`,
         text: `Плюсую, но слишком много букв!`,
       },
       {
-        id: `J7brJK`,
         text: `Согласен с автором!`,
       },
       {
-        id: `rYyjEi`,
         text: `Это где ж такие красоты?`,
       },
       {
-        id: `eM9F0A`,
         text: `Согласен с автором!`,
       },
       {
-        id: `CvlSKo`,
         text: `Планируете записать видосик на эту тему?`,
       },
     ],
   },
   {
-    id: `RMW8IT`,
     title: `Обзор новейшего смартфона`,
-    createdDate: `2021-06-11 20:14:23`,
     announce: `Он написал больше 30 хитов.`,
     fullText: `Как начать действовать?`,
-    category: [
+    img: ``,
+    categories: [
       `Домино`,
       `Программирование`,
       `Железо`,
@@ -62,22 +57,19 @@ const data = [
     ],
     comments: [
       {
-        id: `_DrN3I`,
         text: `Планируете записать видосик на эту тему?`,
       },
       {
-        id: `VW_DBv`,
         text: `Давно не пользуюсь стационарными компьютерами.`,
       },
     ],
   },
   {
-    id: `D6aDq9`,
     title: `Рок — это протест`,
-    createdDate: `2021-06-11 20:14:23`,
     announce: `Человеческие языки позволяют комбинировать слова великим множеством способов`,
     fullText: `Процессор заслуживает особого внимания. Он обязательно понравится геймерам со стажем.`,
-    category: [
+    img: ``,
+    categories: [
       `IT`,
       `Деревья`,
       `За жизнь`,
@@ -86,12 +78,11 @@ const data = [
     comments: [],
   },
   {
-    id: `6gRO82`,
     title: `Что такое золотое сечение`,
-    createdDate: `2021-06-11 20:14:23`,
     announce: `Как начать действовать? Для начала просто соберитесь.`,
     fullText: `Этот смартфон — настоящая находка.`,
-    category: [
+    img: ``,
+    categories: [
       `Гастроном`,
       `Без рамки`,
       `Кино`,
@@ -104,12 +95,11 @@ const data = [
     comments: [],
   },
   {
-    id: `G-8V3b`,
     title: `Ёлки. История деревьев`,
-    createdDate: `2021-06-11 20:14:23`,
     announce: `Этот смартфон — настоящая находка.`,
     fullText: `Рок-музыка всегда ассоциировалась с протестами.`,
-    category: [
+    img: ``,
+    categories: [
       `IT`,
       `Деревья`,
       `Вкусно`,
@@ -119,22 +109,29 @@ const data = [
   },
 ];
 
-const createAPI = () => {
-  const app = express();
-  const dataCopy = JSON.parse(JSON.stringify(data));
+const mockCategories = [
+  `Животные`,
+  `Журналы`,
+  `Игры`,
+];
 
+const createAPI = async () => {
+  const app = express();
   app.use(express.json());
-  const service = new ArticlesService(dataCopy);
+  // @ts-ignore
+  const mockDB = new Sequelize(`sqlite::memory:`, {logging: false});
+  const sec = await initDB(mockDB, {categories: mockCategories, articles: mockArticles});
+  const service = new ArticlesService(sec);
   articles(app, service);
   return app;
 };
 
 describe(`API returns a list of all articles`, () => {
-  const app = createAPI();
-
+  let app;
   let response;
 
   beforeAll(async () => {
+    app = await createAPI();
     response = await request(app).get(`/articles`);
   });
 
@@ -144,11 +141,11 @@ describe(`API returns a list of all articles`, () => {
 });
 
 describe(`API returns an article with given id`, () => {
-  const app = createAPI();
-
+  let app;
   let response;
 
   beforeAll(async () => {
+    app = await createAPI();
     response = await request(app).get(`/articles/8MfXha`);
   });
 
@@ -176,12 +173,11 @@ describe(`API creates an article if data is valid`, () => {
       `За жизнь`,
     ],
   };
-
-  const app = createAPI();
-
+  let app;
   let response;
 
   beforeAll(async () => {
+    app = await createAPI();
     response = await request(app).post(`/articles`).send(newArticle);
   });
 
@@ -211,7 +207,11 @@ describe(`API refuses to create an article if data is invalid`, () => {
     ],
   };
 
-  const app = createAPI();
+  let app;
+
+  beforeAll(async () => {
+    app = await createAPI();
+  });
 
   test(`Without any required property response code is 400`, async () => {
     for (const key of Object.keys(newArticle)) {
@@ -241,12 +241,11 @@ describe(`API changes existent article`, () => {
       `За жизнь`,
     ],
   };
-
-  const app = createAPI();
-
+  let app;
   let response;
 
   beforeAll(async () => {
+    app = await createAPI();
     response = await request(app).put(`/articles/8MfXha`).send(validArticle);
   });
 
@@ -258,9 +257,13 @@ describe(`API changes existent article`, () => {
 });
 
 describe(`API returns correctly bad codes`, () => {
-  test(`API returns status code 404 when trying to change non-existent article`, () => {
-    const app = createAPI();
+  let app;
 
+  beforeAll(async () => {
+    app = await createAPI();
+  });
+
+  test(`API returns status code 404 when trying to change non-existent article`, () => {
     const validArticle = {
       title: `Самый лучший музыкальный альбом этого года`,
       announce: `Достичь успеха помогут ежедневные повторения.`,
@@ -283,8 +286,6 @@ describe(`API returns correctly bad codes`, () => {
   });
 
   test(`API returns status 400 when trying to change an article with invalid data`, () => {
-    const app = createAPI();
-
     const invalidArticle = {
       title: `Самый лучший музыкальный альбом этого года`,
       announce: `Достичь успеха помогут ежедневные повторения.`,
@@ -296,10 +297,11 @@ describe(`API returns correctly bad codes`, () => {
 });
 
 describe(`API correcty deletes an article & API refuses to delete non-existent article`, () => {
-  const app = createAPI();
+  let app;
   let response;
 
   beforeAll(async () => {
+    app = await createAPI();
     response = await request(app).delete(`/articles/RMW8IT`);
   });
 
@@ -313,11 +315,11 @@ describe(`API correcty deletes an article & API refuses to delete non-existent a
 describe(`API creates a comment if data is valid`, () => {
   const comment = {text: `comment`};
 
-  const app = createAPI();
-
+  let app;
   let response;
 
   beforeAll(async () => {
+    app = await createAPI();
     response = await request(app).post(`/articles/8MfXha/comments`).send(comment);
   });
 
@@ -331,7 +333,11 @@ describe(`API creates a comment if data is valid`, () => {
 describe(`API refuses to create a comment if data is invalid`, () => {
   const comment = {text: `comment`};
 
-  const app = createAPI();
+  let app;
+
+  beforeAll(async () => {
+    app = await createAPI();
+  });
 
   test(`Without any required property response code is 400`, async () => {
     for (const key of Object.keys(comment)) {
@@ -344,10 +350,11 @@ describe(`API refuses to create a comment if data is invalid`, () => {
 });
 
 describe(`API correcty deletes a comment`, () => {
-  const app = createAPI();
+  let app;
   let response;
 
   beforeAll(async () => {
+    app = await createAPI();
     response = await request(app).delete(`/articles/8MfXha/comments/wuadOQ`);
   });
 

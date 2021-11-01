@@ -2,20 +2,25 @@
 'use strict';
 
 const express = require(`express`);
-
 const request = require(`supertest`);
 const category = require(`./categories`);
 const {CategoriesService} = require(`../data-service`);
 const {HttpCode} = require(`../../constants`);
+const Sequelize = require(`sequelize`);
+const initDB = require(`../lib/init-db`);
+// @ts-ignore
+const mockDB = new Sequelize(`sqlite::memory:`, {logging: false});
 
-const data = [
+const app = express();
+app.use(express.json());
+
+const articles = [
   {
-    id: `8MfXha`,
     title: `Как достигнуть успеха не вставая с кресла`,
-    createdDate: `2021-06-11 20:14:23`,
+    img: `ddd`,
     announce: `Вы можете достичь всего.`,
     fullText: `Альбом стал настоящим открытием года.`,
-    category: [
+    categories: [
       `Вкусно`,
       `IT`,
       `Кино`,
@@ -25,34 +30,28 @@ const data = [
     ],
     comments: [
       {
-        id: `wuadOQ`,
         text: `Плюсую, но слишком много букв!`,
       },
       {
-        id: `J7brJK`,
         text: `Согласен с автором!`,
       },
       {
-        id: `rYyjEi`,
         text: `Это где ж такие красоты?`,
       },
       {
-        id: `eM9F0A`,
         text: `Согласен с автором!`,
       },
       {
-        id: `CvlSKo`,
         text: `Планируете записать видосик на эту тему?`,
       },
     ],
   },
   {
-    id: `RMW8IT`,
     title: `Обзор новейшего смартфона`,
-    createdDate: `2021-06-11 20:14:23`,
+    img: `asd`,
     announce: `Он написал больше 30 хитов.`,
     fullText: `Как начать действовать?`,
-    category: [
+    categories: [
       `Домино`,
       `Программирование`,
       `Железо`,
@@ -64,22 +63,19 @@ const data = [
     ],
     comments: [
       {
-        id: `_DrN3I`,
         text: `Планируете записать видосик на эту тему?`,
       },
       {
-        id: `VW_DBv`,
         text: `Давно не пользуюсь стационарными компьютерами.`,
       },
     ],
   },
   {
-    id: `D6aDq9`,
     title: `Рок — это протест`,
-    createdDate: `2021-06-11 20:14:23`,
+    img: `dsadf`,
     announce: `Человеческие языки позволяют комбинировать слова великим множеством способов`,
     fullText: `Процессор заслуживает особого внимания. Он обязательно понравится геймерам со стажем.`,
-    category: [
+    categories: [
       `IT`,
       `Деревья`,
       `За жизнь`,
@@ -88,12 +84,11 @@ const data = [
     comments: [],
   },
   {
-    id: `6gRO82`,
     title: `Что такое золотое сечение`,
-    createdDate: `2021-06-11 20:14:23`,
+    img: `ffff`,
     announce: `Как начать действовать? Для начала просто соберитесь.`,
     fullText: `Этот смартфон — настоящая находка.`,
-    category: [
+    categories: [
       `Гастроном`,
       `Без рамки`,
       `Кино`,
@@ -106,12 +101,11 @@ const data = [
     comments: [],
   },
   {
-    id: `G-8V3b`,
     title: `Ёлки. История деревьев`,
-    createdDate: `2021-06-11 20:14:23`,
+    img: `123ddd`,
     announce: `Этот смартфон — настоящая находка.`,
     fullText: `Рок-музыка всегда ассоциировалась с протестами.`,
-    category: [
+    categories: [
       `IT`,
       `Деревья`,
       `Вкусно`,
@@ -121,35 +115,26 @@ const data = [
   },
 ];
 
-const app = express();
-app.use(express.json());
-
-category(app, new CategoriesService(data));
+const categories = [
+  `Животные`,
+  `Журналы`,
+  `Игры`,
+];
 
 describe(`API returns category list`, () => {
   let response;
 
   beforeAll(async () => {
-    response = await request(app)
-      .get(`/categories`);
+    const sec = await initDB(mockDB, {categories, articles});
+    const service = new CategoriesService(sec);
+    category(app, service);
+    response = await request(app).get(`/categories`);
   });
 
   test(`Status code 200`, () => expect(response.status).toBe(HttpCode.OK));
-  test(`Returns list of 11 categories`, () => expect(response.body.length).toBe(11));
-  test(`Category names are in list`, () => {
-    expect.arrayContaining([
-      `Деревья`,
-      `За жизнь`,
-      `Без рамки`,
-      `Разное`,
-      `IT`,
-      `Музыка`,
-      `Кино`,
-      `Программирование`,
-      `Железо`,
-      `Домино`,
-      `Гастроном`,
-      `Вкусно`,
-    ]);
-  });
+  test(`Returns list of 3 categories`, () => expect(response.body.length).toBe(3));
+  test(`Category names are in list`, () => expect(response.body.map((it) => it.name)).toEqual(
+      expect.arrayContaining([`Журналы`, `Игры`, `Животные`]),
+  ),
+  );
 });

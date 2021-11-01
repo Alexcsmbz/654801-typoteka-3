@@ -8,16 +8,16 @@ class ArticlesAPI extends API {
     super(baseURL, timeout);
   }
 
-  getArticles() {
-    return this._load(`/articles`);
+  getArticles({comments}) {
+    return this._load(`/articles`, {params: {comments}});
   }
 
-  getArticleById(id) {
-    return this._load(`/articles/${id}`);
+  getArticleById(id, comments) {
+    return this._load(`/articles/${id}`, {params: {comments}});
   }
 
-  getCategories() {
-    return this._load(`/categories`);
+  getCategories(count) {
+    return this._load(`/categories`, {params: {count}});
   }
 
   getComments() {
