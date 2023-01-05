@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 const articles = require(`./articles`);
 const category = require(`./categories`);

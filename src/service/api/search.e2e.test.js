@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 const express = require(`express`);
 const request = require(`supertest`);
@@ -38,7 +38,6 @@ const articles = [
   },
 ];
 
-
 describe(`API returns articles based on search query`, () => {
   let response;
 
@@ -51,7 +50,9 @@ describe(`API returns articles based on search query`, () => {
 
   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
   test(`1 articles found`, () => expect(response.body.length).toBe(1));
-  test(`Article has correct title`, () => expect(response.body[0].title).toBe(`Борьба с прокрастинацией`));
+  test(`Article has correct title`, () =>
+    expect(response.body[0].title).toBe(`Борьба с прокрастинацией`));
 });
 
-test(`API returns 400 when query string is absent`, () => request(app).get(`/search`).expect(HttpCode.BAD_REQUEST));
+test(`API returns 400 when query string is absent`, () =>
+  request(app).get(`/search`).expect(HttpCode.BAD_REQUEST));

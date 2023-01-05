@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 require(`module-alias/register`);
 
 const {Cli} = require(`./cli`);

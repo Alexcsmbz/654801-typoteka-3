@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 const DEFAULT_PORT = 8080;
 const Dir = {

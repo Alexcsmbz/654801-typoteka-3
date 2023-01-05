@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 const USER_ARGV_INDEX = 2;
 const DEFAULT_COMMAND = `--help`;

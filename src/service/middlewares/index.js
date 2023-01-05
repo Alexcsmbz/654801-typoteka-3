@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 const articleExist = require(`./article-exist`);
 const articleCommentExist = require(`./article-comment-exist`);

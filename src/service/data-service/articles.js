@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 const {Aliase} = require(`../models/constants`);
 
@@ -31,7 +31,10 @@ class ArticlesService {
       include.push(Aliase.COMMENTS);
     }
 
-    const articles = await this._Article.findAll({include, order: [[`createdAt`, `DESC`]]});
+    const articles = await this._Article.findAll({
+      include,
+      order: [[`createdAt`, `DESC`]],
+    });
     return articles.map((a) => a.get());
   }
 

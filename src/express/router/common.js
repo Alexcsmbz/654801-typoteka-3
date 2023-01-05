@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 const {Router} = require(`express`);
 // @ts-ignore
@@ -6,7 +6,10 @@ const router = new Router();
 const {articlesApi} = require(`../api`);
 
 router.get(`/`, async (_, res) => {
-  const [articles, categories] = await Promise.all([articlesApi.getArticles(), articlesApi.getCategories(true)]);
+  const [articles, categories] = await Promise.all([
+    articlesApi.getArticles({comments: false}),
+    articlesApi.getCategories(true),
+  ]);
   res.render(`main`, {articles, categories});
 });
 router.get(`/register`, (_, res) => res.render(`sign-up`));
