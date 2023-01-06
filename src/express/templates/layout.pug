@@ -1,3 +1,36 @@
+mixin pagination(page, totalPages, width, prefix)
+  -
+    let start = page - width;
+    let end = page + width;
+
+    if (start < 1) {
+      end += 1 - start;
+      start = 1;
+    }
+
+    if (end > totalPages) {
+      start -= end - totalPages;
+      end = totalPages;
+    }
+
+    if (start < 1) {
+      start = 1;
+    }
+
+    let i = start - 1
+
+  .preview__toggle-wrapper
+    ul.preview__pagination.pagination
+      if start > 1
+        li.pagination__item
+          a(href=`${prefix}page=${page - 1}`).pagination__button.button.button--backwards
+      while i++ < end
+        li(class={'pagination__item--active': i === page}).pagination__item
+          a(class={active: i === page, 'button--disabled': i === page} href=`${prefix}page=${i}`)= i
+      if end < totalPages
+        li.pagination__item
+          a(href=`${prefix}page=${page + 1}`).pagination__button.button.button--forward
+
 doctype html
 html(lang='ru')
   head
@@ -10,24 +43,22 @@ html(lang='ru')
     link(rel='preload' href='/fonts/Inter-Medium.woff2' as='font' crossorigin='anonymous')
     link(rel='preload' href='/fonts/SFProDisplay-Regular.woff2' as='font' crossorigin='anonymous')
     link(rel='stylesheet' href='/css/style.min.css')
+    style.
+      a.active {
+        pointer-events: none;
+      }
+
+      .server-error {
+        border-radius: 10px;
+        color: white;
+        background-color: tomato;
+        margin: 20px 0;
+        padding: 10px;
+      }
   body
     .wrapper
-      header.header
-        a.header__logo.logo(href='#')
-          img.logo__image(src='/img/icons/logo-image-only.svg' alt='логотип Тайпотеки')
-          span.logo__name Типотека
-        nav.header__nav
-          ul.header__nav-list
-            li.header__list-item
-              a.header__registration(href='#') Регистрация
-            li.header__list-item
-              a.header__enter(href='#') Вход с паролем
-        a.header__search.button.button--search(href='#' aria-label='поиск по сайту')
+      include header.pug
       block content 
-      footer.footer
-        a.footer__copyright(href='#' aria-label='HTMLAcademy')
-          img(src='/img/icons/HTMLAcademyLogo.svg' width='112' height='50' alt='HTMLAcademy')
-        span.footer__dot
-        p.footer__text Типотека, 2019
+      include footer.pug
     script(src='/js/vendor.js')
     script(src='/js/main.js')

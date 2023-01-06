@@ -8,8 +8,8 @@ class ArticlesAPI extends API {
     super(baseURL, timeout);
   }
 
-  getArticles({comments}) {
-    return this._load(`/articles`, {params: {comments}});
+  getArticles({offset = undefined, limit = undefined, comments}) {
+    return this._load(`/articles`, {params: {comments, offset, limit}});
   }
 
   getArticleById(id, comments) {

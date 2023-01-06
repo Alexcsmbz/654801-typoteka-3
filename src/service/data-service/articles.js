@@ -42,6 +42,17 @@ class ArticlesService {
     const [affectedRows] = await this._Article.update(article, {where: {id}});
     return !!affectedRows;
   }
+
+  async findPage({limit, offset}) {
+    const {count, rows} = await this._Article.findAndCountAll({
+      limit,
+      offset,
+      include: [Aliase.CATEGORIES],
+      order: [[`createdAt`, `DESC`]],
+      distinct: true,
+    });
+    return {count, articles: rows};
+  }
 }
 
 module.exports = ArticlesService;
