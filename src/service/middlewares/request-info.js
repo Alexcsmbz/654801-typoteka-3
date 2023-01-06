@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 module.exports = (logger) => (req, res, next) => {
   logger.debug(`Request on route ${req.url}`);

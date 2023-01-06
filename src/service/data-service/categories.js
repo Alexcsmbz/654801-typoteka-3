@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 const Sequelize = require(`sequelize`);
 const {Aliase} = require(`../models/constants`);
@@ -10,13 +10,23 @@ class CategoriesService {
   }
 
   async findAll(withCount) {
-    return withCount
-      ? await this._Category.findAll({
+    if (withCount) {
+      const categoriesWithCounts = await this._Category.findAll({
         attributes: [`id`, `name`, [Sequelize.fn(`COUNT`, `*`), `count`]],
         group: [Sequelize.col(`Category.id`)],
-        include: [{model: this._ArticleCategory, as: Aliase.ARTICLE_CATEGORIES, attributes: []}],
-      }).map((it) => it.get())
-      : this._Category.findAll({raw: true});
+        include: [
+          {
+            model: this._ArticleCategory,
+            as: Aliase.ARTICLE_CATEGORIES,
+            attributes: [],
+          },
+        ],
+      });
+
+      return categoriesWithCounts.map((it) => it.get());
+    } else {
+      return await this._Category.findAll({raw: true});
+    }
   }
 }
 

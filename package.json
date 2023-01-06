@@ -6,10 +6,10 @@
   "scripts": {
     "test": "npm run eslint && npm run jest",
     "jest": "jest",
+    "format": "prettier --write \"./**/*.{js,jsx,json}\"",
     "start": "cross-env LOG_LEVEL=error node -r dotenv/config ./src/service/service.js",
     "start::debug": "cross-env LOG_LEVEL=info NODE_ENV=development node -r dotenv/config ./src/service/service.js",
     "server": "npm run start::debug -- --server",
-    "generate": "node ./src/service/service.js --generate",
     "filldb": "node -r dotenv/config ./src/service/service.js --filldb",
     "eslint": "eslint --ext .js src/",
     "start-front-server": "nodemon ./src/express/express.js",
@@ -39,8 +39,9 @@
     "module-alias": "2.2.2",
     "nodemon": "2.0.12",
     "pino-pretty": "6.0.0",
+    "prettier": "2.8.1",
     "pug-lint": "2.6.0",
-    "sqlite3": "5.0.2",
+    "sqlite3": "5.1.4",
     "supertest": "6.1.6"
   },
   "dependencies": {

@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 const articleKeys = [`title`, `announce`, `fullText`, `category`];
 const commentKeys = [`text`];

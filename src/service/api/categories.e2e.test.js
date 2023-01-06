@@ -1,5 +1,4 @@
-
-'use strict';
+"use strict";
 
 const express = require(`express`);
 const request = require(`supertest`);
@@ -75,12 +74,7 @@ const articles = [
     img: `dsadf`,
     announce: `Человеческие языки позволяют комбинировать слова великим множеством способов`,
     fullText: `Процессор заслуживает особого внимания. Он обязательно понравится геймерам со стажем.`,
-    categories: [
-      `IT`,
-      `Деревья`,
-      `За жизнь`,
-      `Вкусно`,
-    ],
+    categories: [`IT`, `Деревья`, `За жизнь`, `Вкусно`],
     comments: [],
   },
   {
@@ -105,21 +99,12 @@ const articles = [
     img: `123ddd`,
     announce: `Этот смартфон — настоящая находка.`,
     fullText: `Рок-музыка всегда ассоциировалась с протестами.`,
-    categories: [
-      `IT`,
-      `Деревья`,
-      `Вкусно`,
-      `Кино`,
-    ],
+    categories: [`IT`, `Деревья`, `Вкусно`, `Кино`],
     comments: [],
   },
 ];
 
-const categories = [
-  `Животные`,
-  `Журналы`,
-  `Игры`,
-];
+const categories = [`Животные`, `Журналы`, `Игры`];
 
 describe(`API returns category list`, () => {
   let response;
@@ -132,9 +117,10 @@ describe(`API returns category list`, () => {
   });
 
   test(`Status code 200`, () => expect(response.status).toBe(HttpCode.OK));
-  test(`Returns list of 3 categories`, () => expect(response.body.length).toBe(3));
-  test(`Category names are in list`, () => expect(response.body.map((it) => it.name)).toEqual(
-      expect.arrayContaining([`Журналы`, `Игры`, `Животные`]),
-  ),
-  );
+  test(`Returns list of 3 categories`, () =>
+    expect(response.body.length).toBe(3));
+  test(`Category names are in list`, () =>
+    expect(response.body.map((it) => it.name)).toEqual(
+      expect.arrayContaining([`Журналы`, `Игры`, `Животные`])
+    ));
 });

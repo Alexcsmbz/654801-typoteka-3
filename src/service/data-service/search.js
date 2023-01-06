@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 const {Op} = require(`sequelize`);
 const {Aliase} = require(`../models/constants`);
@@ -16,9 +16,7 @@ class SearchService {
         },
       },
       include: [Aliase.CATEGORIES],
-      order: [
-        [`createdAt`, `DESC`],
-      ],
+      order: [[`createdAt`, `DESC`]],
     });
     return articles.map((article) => article.get());
   }

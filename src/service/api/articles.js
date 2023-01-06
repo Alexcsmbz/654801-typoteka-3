@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 const {Router} = require(`express`);
 const {articleKeys, commentKeys} = require(`./constants`);
@@ -16,7 +16,14 @@ module.exports = (app, service) => {
   app.use(`/articles`, route);
 
   route.get(`/`, async (req, res) => {
-    res.status(HttpCode.OK).json(await service.findAll(req.query.comments));
+    const {offset, limit, comments} = req.query;
+    let result;
+    if (limit || offset) {
+      result = await service.findPage({limit, offset, comments});
+    } else {
+      result = await service.findAll(comments);
+    }
+    res.status(HttpCode.OK).json(result);
   });
 
   route.get(`/:articleId`, articleExist(service), (_, res) => {
@@ -24,16 +31,22 @@ module.exports = (app, service) => {
     res.status(HttpCode.OK).json(article);
   });
 
-  route.post(`/`, (...args) => keysValidator(...args, articleKeys), async (req, res) => {
-    res.status(HttpCode.CREATED).json(await service.create(req.body));
-  });
+  route.post(
+    `/`,
+    (...args) => keysValidator(...args, articleKeys),
+    async (req, res) => {
+      res.status(HttpCode.CREATED).json(await service.create(req.body));
+    }
+  );
 
   route.put(
-      `/:articleId`,
-      [articleExist(service), (...args) => keysValidator(...args, articleKeys)],
-      async (req, res) => {
-        res.status(HttpCode.OK).json(await service.update(req.params.articleId, req.body));
-      },
+    `/:articleId`,
+    [articleExist(service), (...args) => keysValidator(...args, articleKeys)],
+    async (req, res) => {
+      res
+        .status(HttpCode.OK)
+        .json(await service.update(req.params.articleId, req.body));
+    }
   );
 
   route.delete(`/:articleId`, articleExist(service), async (_, res) => {
@@ -46,17 +59,24 @@ module.exports = (app, service) => {
     res.status(HttpCode.OK).json(article.comments);
   });
 
-  route.delete(`/:articleId/comments/:commentId`, [articleExist(service), articleCommentExist], async (_, res) => {
-    const {article, comment} = res.locals;
-    await service.dropComment(article, comment);
-    res.status(HttpCode.OK).send(comment);
-  });
+  route.delete(
+    `/:articleId/comments/:commentId`,
+    [articleExist(service), articleCommentExist],
+    async (_, res) => {
+      const {article, comment} = res.locals;
+      await service.dropComment(article, comment);
+      res.status(HttpCode.OK).send(comment);
+    }
+  );
 
   route.post(
-      `/:articleId/comments`,
-      [articleExist(service), (...args) => keysValidator(...args, commentKeys)],
-      async (req, res) => {
-        const {article} = res.locals;
-        res.status(HttpCode.CREATED).json(await service.createComment(article, req.body));
-      });
+    `/:articleId/comments`,
+    [articleExist(service), (...args) => keysValidator(...args, commentKeys)],
+    async (req, res) => {
+      const {article} = res.locals;
+      res
+        .status(HttpCode.CREATED)
+        .json(await service.createComment(article, req.body));
+    }
+  );
 };

@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 const express = require(`express`);
 const path = require(`path`);
@@ -14,4 +14,6 @@ app.use(express.static(path.resolve(__dirname, Dir.UPLOAD)));
 app.set(`views`, path.resolve(__dirname, `templates`));
 app.set(`view engine`, `pug`);
 
-app.listen(DEFAULT_PORT, () => console.log(`Сервер запущен на порту: ${DEFAULT_PORT}`));
+app.listen(DEFAULT_PORT, () =>
+  console.log(`Сервер запущен на порту: ${DEFAULT_PORT}`)
+);

@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 const {DEFAULT_PORT, API_PREFIX} = require(`./constants`);
 const express = require(`express`);
@@ -40,12 +40,13 @@ module.exports = {
     try {
       app.listen(port, (err) => {
         if (err) {
-          return logger.error(`An error occurred on server creation: ${err.message}`);
+          return logger.error(
+            `An error occurred on server creation: ${err.message}`
+          );
         }
 
         return logger.info(`Listening to connections on ${port}`);
       });
-
     } catch (err) {
       logger.error(`An error occurred: ${err.message}`);
       process.exit(1);

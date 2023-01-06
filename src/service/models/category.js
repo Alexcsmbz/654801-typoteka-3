@@ -1,10 +1,11 @@
-'use strict';
+"use strict";
 
 const {DataTypes} = require(`sequelize`);
 
-module.exports = (sequelize) => sequelize.define(`Category`, {
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-});
+module.exports = (sequelize) =>
+  sequelize.define(`Category`, {
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+  });
