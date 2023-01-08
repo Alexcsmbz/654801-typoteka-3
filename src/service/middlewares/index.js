@@ -6,6 +6,7 @@ const keysValidator = require(`./keys-validator`);
 const clientError = require(`./client-error`);
 const serverError = require(`./server-error`);
 const requestInfo = require(`./request-info`);
+const articleValidator = require(`./article-validator`);
 
 module.exports = {
   articleExist,
@@ -14,4 +15,5 @@ module.exports = {
   clientError,
   serverError,
   requestInfo,
+  articleValidator,
 };
