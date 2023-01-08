@@ -21,7 +21,9 @@ class ArticlesService {
   }
 
   async findOne(id) {
-    return this._Article.findByPk(id, {include: [Aliase.CATEGORIES]});
+    return await this._Article.findByPk(id, {
+      include: [Aliase.CATEGORIES],
+    });
   }
 
   async findAll(withComments) {

@@ -1,5 +1,6 @@
 "use strict";
 
+const {HttpMethod} = require("../../constants");
 const {defaultUrl, TIMEOUT} = require(`../constants`);
 const API = require(`./api`);
 
@@ -9,32 +10,46 @@ class ArticlesAPI extends API {
   }
 
   getArticles({offset = undefined, limit = undefined, comments}) {
-    return this._load(`/articles`, {params: {comments, offset, limit}});
+    return this._request(`/articles`, {params: {comments, offset, limit}});
   }
 
   getArticleById(id, comments) {
-    return this._load(`/articles/${id}`, {params: {comments}});
+    return this._request(`/articles/${id}`, {params: {comments}});
   }
 
   getCategories(count) {
-    return this._load(`/categories`, {params: {count}});
+    return this._request(`/categories`, {params: {count}});
   }
 
   getComments() {
-    return this._load(`/articles/jwwQoG/comments`);
+    return this._request(`/articles/jwwQoG/comments`);
   }
 
   getCommentsById(id) {
-    return this._load(`/articles/${id}/comments`);
+    return this._request(`/articles/${id}/comments`);
   }
 
   search(query) {
-    return this._load(`/search`, {params: {query}});
+    return this._request(`/search`, {params: {query}});
   }
 
-  async createArticle(data) {
-    return this._load(`/articles/add`, {
+  createArticle(data) {
+    return this._request(`/articles/add`, {
       method: `POST`,
+      data,
+    });
+  }
+
+  editArticle(id, data) {
+    return this._request(`/articles/${id}`, {
+      method: HttpMethod.PUT,
+      data,
+    });
+  }
+
+  createComment(id, data) {
+    return this._request(`/articles/${id}/comments`, {
+      method: HttpMethod.POST,
       data,
     });
   }

@@ -7,7 +7,7 @@ class CommentsService {
   }
 
   async create(articleId, comment) {
-    return this._Comment.create({articleId, ...comment});
+    return await this._Comment.create({articleId, ...comment});
   }
 
   async drop(id) {

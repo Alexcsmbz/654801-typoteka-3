@@ -7,6 +7,8 @@ const {router} = require(`./router`);
 
 const app = express();
 
+app.use(express.urlencoded({extended: false}));
+
 app.use(router);
 app.use(express.static(path.resolve(__dirname, Dir.PUBLIC)));
 app.use(express.static(path.resolve(__dirname, Dir.UPLOAD)));

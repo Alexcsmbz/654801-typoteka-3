@@ -7,6 +7,7 @@ const {
   ArticlesService,
   CategoriesService,
   SearchService,
+  CommentsService,
 } = require(`../data-service`);
 const sequelize = require(`../lib/sequelize`);
 const defineModels = require(`../models`);
@@ -14,7 +15,11 @@ const defineModels = require(`../models`);
 defineModels(sequelize);
 
 module.exports = async (routes) => {
-  articles(routes, new ArticlesService(sequelize));
+  articles(
+    routes,
+    new ArticlesService(sequelize),
+    new CommentsService(sequelize)
+  );
   category(routes, new CategoriesService(sequelize));
   search(routes, new SearchService(sequelize));
 

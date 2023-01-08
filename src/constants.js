@@ -18,9 +18,17 @@ const HttpCode = {
   CREATED: 201,
 };
 
+const HttpMethod = {
+  GET: `GET`,
+  POST: `POST`,
+  PUT: `PUT`,
+  DELETE: `DELETE`,
+};
+
 module.exports = {
   USER_ARGV_INDEX,
   DEFAULT_COMMAND,
   ExitCode,
   HttpCode,
+  HttpMethod,
 };
